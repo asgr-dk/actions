@@ -1,21 +1,28 @@
-name: Elm Github Pages
+name: Github Pages
 
 on:
   workflow_call:
     inputs:
-      env-name:
+
+      name:
         description: Name of the deployment environment
         type: string
         default: github-pages
+
       script:
         description: |
           Bash script that builds the site.
-          The directory `_site` is already created — put the final files there.
+          The directory `_site` is already created — put all files for the site there.
         type: string
-        default: |
-          elm make --optimize --output=build/index.html src/Main.elm
-          mv build/index.html _site/index.html
+        default: echo "<h1>hello world!</h1>" > _site/index.html
+      
+      get-elm:
+        default: false
+        type: boolean
 
+      get-esbuild:
+        default: false
+        type: boolean
 jobs:
   build:
     runs-on: ubuntu-slim
@@ -25,6 +32,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: asgr-dk/actions/.github/actions/get-elm@0.6.0
+        if: inputs.get-elm == true
+      - uses: asgr-dk/actions/.github/actions/get-esbuild@0.6.0
+        if: inputs.get-esbuild == true
       - shell: bash
         run: |
           set -euo pipefail
@@ -46,7 +56,7 @@ jobs:
     needs: build
     if: github.ref_type == 'tag'
     environment:
-      name: ${{ inputs.env-name }}
+      name: ${{ inputs.name }}
       url: ${{ steps.deploy.outputs.page_url }}
     concurrency:
       group: deploy
