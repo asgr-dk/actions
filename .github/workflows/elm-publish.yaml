@@ -1,0 +1,37 @@
+name: Elm Publish
+
+on:
+  workflow_call:
+    inputs: {}
+
+jobs:
+  diff:
+    runs-on: ubuntu-slim
+    if: github.ref_type == 'branch'
+    concurrency:
+      group: build-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
+      - shell: bash
+        name: Build Package & Diff API
+        run: |
+          set -euo pipefail
+          elm make
+          elm diff
+
+  publish:
+    runs-on: ubuntu-slim
+    if: github.ref_type == 'tag'
+    concurrency:
+      group: publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
+      - shell: bash
+        name: Publish Package
+        run: |
+          set -euo pipefail
+          elm publish
