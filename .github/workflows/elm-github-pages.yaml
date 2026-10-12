@@ -1,0 +1,66 @@
+name: Elm Github Pages
+
+on:
+  workflow_call:
+    inputs:
+      script:
+        description: |
+          Bash script that build the site.
+          The directory `_site` is already created — put the final files there.
+        required: true
+        type: string
+        default: |
+          elm make --optimize --output=build/index.html src/Main.elm
+          mv build/index.html _site/index.html
+
+jobs:
+  build:
+    runs-on: ubuntu-slim
+    concurrency:
+      group: build-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: asgr-dk/actions/.github/actions/get-elm@0.2.0
+      - name: Run user-defined build script
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir _site
+          ${{ inputs.script }}
+
+      - uses: actions/upload-artifact@v4
+        if: github.ref_type == 'tag'
+        with:
+          name: site
+          path: _site
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-slim
+    needs: build
+    if: github.ref_type == 'tag'
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: _site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - uses: actions/deploy-pages@v4
+        id: deploy
