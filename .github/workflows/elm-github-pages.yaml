@@ -21,7 +21,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-      - uses: asgr-dk/actions/.github/actions/get-elm@0.2.0
+      - uses: ./.github/actions/get-elm
       - name: Build site
         shell: bash
         run: |
