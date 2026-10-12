@@ -30,6 +30,8 @@ runs:
       shell: bash
       if: steps.cache-elm.outputs.cache-hit != 'true'
       run: |
-        wget https://github.com/elm/compiler/releases/download/${{ inputs.elm-version }}/elm-${{ inputs.elm-version }}-linux-x64.gz
+        set -euo pipefail
+        wget -q https://github.com/elm/compiler/releases/download/${{ inputs.elm-version }}/elm-${{ inputs.elm-version }}-linux-x64.gz
         pigz -dc elm-${{ inputs.elm-version }}-linux-x64.gz > /usr/local/bin/elm
         chmod +x /usr/local/bin/elm
+        rm elm-${{ inputs.elm-version }}-linux-x64.gz

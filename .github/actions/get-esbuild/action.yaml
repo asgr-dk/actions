@@ -1,0 +1,27 @@
+name: Get ESBuild
+description: Downloads and installs ESBuild.
+
+inputs:
+  esbuild-version:
+    default: "0.28.2"
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: cache-esbuild
+      id: cache-esbuild
+      uses: actions/cache@v4
+      with:
+        path: /usr/local/bin/esbuild
+        key: linux-esbuild-${{ inputs.esbuild-version }}
+
+    - name: download-esbuild
+      shell: bash
+      if: steps.cache-esbuild.outputs.cache-hit != 'true'
+      run: |
+        set -euo pipefail
+        wget -q https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-${{ inputs.esbuild-version }}.tgz
+        tar -xzf linux-x64-${{ inputs.esbuild-version }}.tgz --strip-components=2 -C /usr/local/bin package/bin/esbuild
+        chmod +x /usr/local/bin/esbuild
+        rm linux-x64-${{ inputs.esbuild-version }}.tgz
