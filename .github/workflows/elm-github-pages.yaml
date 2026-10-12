@@ -7,14 +7,12 @@ on:
         description: |
           Bash script that builds the site.
           The directory `_site` is already created — put the final files there.
-        required: true
         type: string
         default: |
           elm make --optimize --output=build/index.html src/Main.elm
           mv build/index.html _site/index.html
       env-name:
         description: The name of the deployment environment
-        required: true
         type: string
         default: github-pages
 jobs:
