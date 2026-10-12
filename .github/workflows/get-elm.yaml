@@ -1,0 +1,27 @@
+name: Get Elm
+
+on:
+  workflow_call:
+    inputs:
+      elm-version:
+        default: "0.19.3"
+        required: true
+        type: string
+
+jobs:
+  get-elm:
+    runs-on: ubuntu-slim
+    steps:
+      - name: cache-elm
+        id: cache-elm
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/bin/elm
+          key: ${{ runner.os }}-elm-${{ inputs.elm-version }}
+
+      - name: download-elm
+        if: steps.cache-elm.outputs.cache-hit != 'true'
+        run: |
+          wget https://github.com/elm/compiler/releases/download/${{ inputs.elm-version }}/elm-${{ inputs.elm-version }}-linux-x64.gz
+          pigz -dc elm-${{ inputs.elm-version }}-linux-x64.gz > /usr/local/bin/elm
+          chmod +x /usr/local/bin/elm
