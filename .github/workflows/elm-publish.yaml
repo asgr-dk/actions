@@ -28,5 +28,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
       - shell: bash
+        name: Match tag with elm.json
+        run: |
+          GIT_TAG="${{ github.ref_name }}"
+          ELM_VERSION=$(jq -r '.version' elm.json)
+          if [ "$GIT_TAG" != "$ELM_VERSION" ]; then
+            echo "::error::Mismatch: tag=$GIT_TAG, elm.json=$ELM_VERSION"
+            exit 1
+          fi
+      - shell: bash
         name: Publish Package
         run: elm publish
