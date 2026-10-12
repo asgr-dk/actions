@@ -15,11 +15,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
       - shell: bash
-        name: Build Package & Diff API
-        run: |
-          set -euo pipefail
-          elm make
-          elm diff
+        name: Diff Package API
+        run: elm diff
 
   publish:
     runs-on: ubuntu-slim
@@ -32,6 +29,4 @@ jobs:
       - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
       - shell: bash
         name: Publish Package
-        run: |
-          set -euo pipefail
-          elm publish
+        run: elm publish
