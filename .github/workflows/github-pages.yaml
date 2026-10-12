@@ -31,9 +31,9 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-      - uses: asgr-dk/actions/.github/actions/get-elm@0.6.0
+      - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
         if: inputs.get-elm == true
-      - uses: asgr-dk/actions/.github/actions/get-esbuild@0.6.0
+      - uses: asgr-dk/actions/.github/actions/get-esbuild@1.0.0
         if: inputs.get-esbuild == true
       - shell: bash
         name: Run build script
