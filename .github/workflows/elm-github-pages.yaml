@@ -12,7 +12,11 @@ on:
         default: |
           elm make --optimize --output=build/index.html src/Main.elm
           mv build/index.html _site/index.html
-
+      env-name:
+        description: The name of the deployment environment
+        required: true
+        type: string
+        default: github-pages
 jobs:
   build:
     runs-on: ubuntu-slim
@@ -35,13 +39,10 @@ jobs:
           set -euo pipefail
           mkdir -p _site
           ${{ inputs.script }}
-
-          # Fail early if the script produced nothing
           if [ -z "$(ls -A _site)" ]; then
             echo "::error::Build script finished but _site is empty"
             exit 1
           fi
-
       - uses: actions/upload-artifact@v4
         if: github.ref_type == 'tag'
         with:
@@ -54,7 +55,7 @@ jobs:
     needs: build
     if: github.ref_type == 'tag'
     environment:
-      name: github-pages
+      name: ${{ inputs.env-name }}
       url: ${{ steps.deploy.outputs.page_url }}
     concurrency:
       group: deploy
@@ -68,12 +69,9 @@ jobs:
         with:
           name: site
           path: _site
-
       - uses: actions/configure-pages@v5
-
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site
-
       - uses: actions/deploy-pages@v4
         id: deploy
