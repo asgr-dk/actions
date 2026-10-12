@@ -36,6 +36,7 @@ jobs:
       - uses: asgr-dk/actions/.github/actions/get-esbuild@0.6.0
         if: inputs.get-esbuild == true
       - shell: bash
+        name: Run build script
         run: |
           set -euo pipefail
           mkdir -p _site
