@@ -16,7 +16,7 @@ jobs:
       - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
       - shell: bash
         name: Diff Package API
-        run: elm diff
+        run: elm diff # this hangs for some reason... :S
 
   publish:
     runs-on: ubuntu-slim
