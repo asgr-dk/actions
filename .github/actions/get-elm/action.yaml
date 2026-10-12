@@ -4,11 +4,9 @@ description: Downloads and installs Elm. Also caches Elm packages.
 inputs:
   elm-version:
     default: "0.19.3"
-    required: true
     type: string
   cache-deps:
     default: true
-    required: true
     type: boolean
 
 runs:
