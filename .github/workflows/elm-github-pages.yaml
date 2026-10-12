@@ -20,10 +20,15 @@ jobs:
       group: build-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v4
       - id: get-elm-ref
         run: echo "ref=${GITHUB_WORKFLOW_REF##*@}" >> "$GITHUB_OUTPUT"
-      - uses: asgr-dk/actions/.github/actions/get-elm@${{ steps.get-elm-ref.outputs.ref }}
+      - uses: actions/checkout@v4
+        with:
+          repository: asgr-dk/actions
+          ref: ${{ steps.get-elm-ref.outputs.ref }}
+          path: .actions
+      - uses: ./.actions/.github/actions/get-elm
+      - uses: actions/checkout@v4
       - name: Build site
         shell: bash
         run: |
