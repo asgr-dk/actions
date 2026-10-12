@@ -1,16 +1,14 @@
-name: Elm Github Pages
+name: Github Pages
 
 on:
   workflow_call:
     inputs:
-      script:
+      build-action:
         description: |
-          Bash script that builds the site.
-          The directory `_site` is already created — put the final files there.
+          A composite action that builds the site.
+          It must produce a `_site` directory.
         type: string
-        default: |
-          elm make --optimize --output=build/index.html src/Main.elm
-          mv build/index.html _site/index.html
+        required: true
       env-name:
         description: The name of the deployment environment
         type: string
@@ -22,32 +20,14 @@ jobs:
       group: build-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - id: get-elm-ref
-        run: echo "ref=${GITHUB_WORKFLOW_REF##*@}" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
-        with:
-          repository: asgr-dk/actions
-          ref: ${{ steps.get-elm-ref.outputs.ref }}
-          path: .actions
-      - uses: ./.actions/.github/actions/get-elm
-      - uses: actions/checkout@v4
-      - name: Build site
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p _site
-          ${{ inputs.script }}
-          if [ -z "$(ls -A _site)" ]; then
-            echo "::error::Build script finished but _site is empty"
-            exit 1
-          fi
+      - uses: ${{ inputs.build-action }}
       - uses: actions/upload-artifact@v4
         if: github.ref_type == 'tag'
         with:
           name: site
           path: _site
           retention-days: 1
-
   deploy:
     runs-on: ubuntu-slim
     needs: build
