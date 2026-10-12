@@ -5,7 +5,7 @@ on:
     inputs:
       script:
         description: |
-          Bash script that build the site.
+          Bash script that builds the site.
           The directory `_site` is already created — put the final files there.
         required: true
         type: string
@@ -22,12 +22,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: asgr-dk/actions/.github/actions/get-elm@0.2.0
-      - name: Run user-defined build script
+      - name: Build site
         shell: bash
         run: |
           set -euo pipefail
-          mkdir _site
+          mkdir -p _site
           ${{ inputs.script }}
+
+          # Fail early if the script produced nothing
+          if [ -z "$(ls -A _site)" ]; then
+            echo "::error::Build script finished but _site is empty"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         if: github.ref_type == 'tag'
