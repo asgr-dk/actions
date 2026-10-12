@@ -1,11 +1,15 @@
 name: Get Elm
-description: downloads & installs the specified version of elm
+description: Downloads and installs Elm. Also caches Elm packages.
 
 inputs:
   elm-version:
     default: "0.19.3"
     required: true
     type: string
+  cache-deps:
+    default: true
+    required: true
+    type: boolean
 
 runs:
   using: composite
@@ -15,7 +19,16 @@ runs:
       uses: actions/cache@v4
       with:
         path: /usr/local/bin/elm
-        key: ${{ runner.os }}-elm-${{ inputs.elm-version }}
+        key: linux-elm-${{ inputs.elm-version }}
+    - name: cache-elm-deps
+      id: cache-elm-deps
+      if: ${{ inputs.cache-deps != false }}
+      uses: actions/cache@v4
+      with:
+        path: ~/.elm
+        key: elm-cache-${{ hashFiles('**/elm.json') }}
+        restore-keys: |
+          elm-cache-
 
     - name: download-elm
       shell: bash
