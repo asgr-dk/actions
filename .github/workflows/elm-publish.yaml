@@ -13,7 +13,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-      - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
+      - uses: asgr-dk/actions/.github/actions/get-elm@1.1.0
       - shell: bash
         name: Build Package
         run: elm make --output=/dev/null
@@ -26,7 +26,7 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
-      - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
+      - uses: asgr-dk/actions/.github/actions/get-elm@1.1.0
       - shell: bash
         name: Match tag with elm.json
         run: |
