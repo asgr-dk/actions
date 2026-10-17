@@ -5,7 +5,7 @@ on:
     inputs: {}
 
 jobs:
-  diff:
+  build:
     runs-on: ubuntu-slim
     if: github.ref_type == 'branch'
     concurrency:
