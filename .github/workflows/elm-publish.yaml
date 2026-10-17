@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: asgr-dk/actions/.github/actions/get-elm@1.0.0
       - shell: bash
-        name: Diff Package API
-        run: elm diff # this hangs for some reason... :S
+        name: Build Package
+        run: elm make --output=/dev/null
 
   publish:
     runs-on: ubuntu-slim
